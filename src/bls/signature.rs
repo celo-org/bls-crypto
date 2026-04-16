@@ -209,26 +209,21 @@ mod tests {
     fn test_batch_verify() {
         let try_and_increment_direct =
             TryAndIncrement::<_, <Parameters as Bls12Parameters>::G1Parameters>::new(&DirectHasher);
-        test_batch_verify_with_hasher(&try_and_increment_direct, false, false);
+        test_batch_verify_with_hasher(&try_and_increment_direct);
         let try_and_increment_composite = TryAndIncrement::<
             _,
             <Parameters as Bls12Parameters>::G1Parameters,
         >::new(&*COMPOSITE_HASHER);
-        for &cip22 in &[false, true] {
-            test_batch_verify_with_hasher(&try_and_increment_composite, true, cip22);
-            let try_and_increment_composite_cip22 = TryAndIncrementCIP22::<
-                _,
-                <Parameters as Bls12Parameters>::G1Parameters,
-            >::new(&*COMPOSITE_HASHER);
-            test_batch_verify_with_hasher(&try_and_increment_composite_cip22, true, cip22);
-        }
+        test_batch_verify_with_hasher(&try_and_increment_composite);
+        let try_and_increment_composite_cip22 = TryAndIncrementCIP22::<
+            _,
+            <Parameters as Bls12Parameters>::G1Parameters,
+        >::new(&*COMPOSITE_HASHER);
+        test_batch_verify_with_hasher(&try_and_increment_composite_cip22);
     }
 
-    #[allow(unused)] // needed when we don't compile with ffi features
     fn test_batch_verify_with_hasher<H: HashToCurve<Output = G1Projective>>(
         try_and_increment: &H,
-        is_composite: bool,
-        is_cip22: bool,
     ) {
         let rng = &mut test_rng();
         let num_epochs = 10;
@@ -273,33 +268,6 @@ mod tests {
 
         assert!(res.is_ok());
 
-        #[cfg(feature = "ffi")]
-        {
-            use crate::ffi::utils::{Message, MessageFFI};
-            let mut messages = Vec::new();
-            for i in 0..num_epochs {
-                messages.push(Message {
-                    data: msgs[i].0,
-                    extra: msgs[i].1,
-                    public_key: &pubkeys[i],
-                    sig: &sigs[i],
-                });
-            }
-
-            let msgs_ffi = messages.iter().map(MessageFFI::from).collect::<Vec<_>>();
-
-            let mut verified: bool = false;
-
-            let success = crate::ffi::signatures::batch_verify_signature(
-                &msgs_ffi[0] as *const MessageFFI,
-                msgs_ffi.len(),
-                is_composite,
-                is_cip22,
-                &mut verified as *mut bool,
-            );
-            assert!(success);
-            assert!(verified);
-        }
     }
 
     #[test]

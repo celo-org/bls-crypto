@@ -68,8 +68,6 @@ pub mod test_helpers;
 use log::error;
 use thiserror::Error;
 
-pub mod ffi;
-
 /// Convenience result alias
 pub type BlsResult<T> = std::result::Result<T, BLSError>;
 
