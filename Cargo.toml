@@ -14,7 +14,7 @@ ark-ed-on-bw6-761 = { version = "0.3" }
 ark-crypto-primitives = { version = "0.3" }
 
 # other deps
-rand = "0.8.4"
+rand = "0.9.3"
 byteorder = "1.4.3"
 hex = "0.4.3"
 clap = "3"
