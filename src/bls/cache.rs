@@ -115,18 +115,17 @@ mod tests {
     use super::*;
     use ark_ff::UniformRand;
     use ark_serialize::CanonicalSerialize;
-    use ark_std::test_rng;
     use ark_std::rand::Rng;
 
     fn rand_pubkey<R: Rng + Sized>(rng: &mut R) -> PublicKey {
-          PublicKey(G2Projective::rand(rng))
-   }
+        PublicKey(G2Projective::rand(rng))
+    }
 
     #[test]
     fn deserializer() {
         let mut cache = PublicKeyCache::new();
 
-        let mut rng = ark_std::test_rng(); 
+        let mut rng = ark_std::test_rng();
         let pubkeys = (0..10).map(|_| rand_pubkey(&mut rng)).collect::<Vec<_>>();
         let serialized = pubkeys
             .iter()
